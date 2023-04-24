@@ -11,13 +11,17 @@ let
 in
 {
 
+  nixpkgs.config.packageOverrides = pkgs: {
+    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
+  };
+
   # Opengl
   hardware.opengl = {
     enable = true;
     driSupport32Bit = true;
     extraPackages = with pkgs; [
       intel-compute-runtime
-      intel-media-driver
+      vaapi-intel-hybrid
       vaapiIntel
       vaapiVdpau
       libvdpau-va-gl
@@ -34,7 +38,24 @@ in
   hardware.nvidia.modesetting.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
 
-  environment.systemPackages = [ nvidia-offload ];
+  environment.systemPackages = [ 
+    nvidia-offload
+    pkgs.vulkan-loader
+    pkgs.vulkan-headers
+    pkgs.vulkan-tools
+    pkgs.vulkan-validation-layers
+    pkgs.spirv-tools  
+    pkgs.libva
+    pkgs.libva-utils
+    pkgs.libvdpau
+    pkgs.vdpauinfo
+    pkgs.intel-compute-runtime
+    pkgs.vaapiIntel
+    pkgs.vaapiVdpau
+    pkgs.libvdpau-va-gl
+    pkgs.linux-firmware
+    pkgs.vaapi-intel-hybrid
+  ];
 
   hardware.nvidia.prime = {
     offload.enable = true;

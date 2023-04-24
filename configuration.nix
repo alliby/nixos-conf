@@ -48,8 +48,11 @@
   services.xserver = {
     enable = true;
     
+    excludePackages = [ pkgs.xterm ];
+    # desktopManager.xterm.enable = false;
+    
     # Tiling Windows Manager
-    windowManager.qtile.enable = true;
+    windowManager.bspwm.enable = true;
 
   };
 
@@ -86,8 +89,6 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    neovim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    wget
     acpi
     pciutils
     brightnessctl
@@ -124,7 +125,7 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "22.05"; # Did you read the comment?
+  system.stateVersion = "22.11"; # Did you read the comment?
   
   # Storage Optimization
   nix.settings.auto-optimise-store = true;
@@ -133,4 +134,10 @@
     dates = "daily";
     options = "--delete-older-than 10d";
   };
+  
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  fonts.fontDir.enable = true;
+
+  services.xserver.displayManager.lightdm.background = /home/cargo/.local/share/wallhaven/wallhaven-m9wp81.jpg;
+
 }
