@@ -5,30 +5,39 @@
 { config, pkgs, ... }:
 
 {
-
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ./video-configuration.nix
+      # ./video-configuration.nix
       ./environment.nix
       ./programs.nix
+      ./fonts.nix
+      ./power-manager.nix
+      # ./hyprland.nix
     ];
 
   # Use the GRUB 2 boot loader.
-  boot.loader.grub.enable = true;
-  boot.loader.grub.version = 2;
-  # boot.loader.grub.efiSupport = true;
-  # boot.loader.grub.efiInstallAsRemovable = true;
-  # boot.loader.efi.efiSysMountPoint = "/boot/efi";
-  # Define on which hard drive you want to install Grub.
-  boot.loader.grub.device = "/dev/sda"; # or "nodev" for efi only
+  boot.loader.grub = {
+    enable = true;
+    version = 2;
+    device = "/dev/sda"; # or "nodev" for efi only
+    theme = null;
+    backgroundColor = null;
+    splashImage = null;
+  };
 
-  networking.hostName = "nix"; # Define your hostname.
-  # Pick only one of the below networking options.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
-  networking.usePredictableInterfaceNames = false;
-  
+  # Networking
+  networking = {
+    hostName = "nix"; # Define your hostname.
+    networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+    usePredictableInterfaceNames = false;
+    nameservers = [ "1.1.1.1" ]; # Change Dns Resolver
+  };
+  systemd.services.NetworkManager-wait-online.enable = false; # slows down boot time
+
+  # Bluetooth
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
 
   # Set your time zone.
   time.timeZone = "Africa/Algiers";
@@ -47,34 +56,36 @@
   # Enable the X11 windowing system.
   services.xserver = {
     enable = true;
-    
+    dpi = 140;
     excludePackages = [ pkgs.xterm ];
-    # desktopManager.xterm.enable = false;
-    
+
     # Tiling Windows Manager
     windowManager.bspwm.enable = true;
 
+    # Configure keymap in X11
+    layout = "us,ar";
+    # See Full Keyboard Layout Keybinds "grep "grp:.*toggle" /usr/share/X11/xkb/rules/base.lst"
+    xkbOptions = "grp:alt_shift_toggle";
+
+    # Enable touchpad support (enabled default in most desktopManager).
+    libinput.enable = true;
+    libinput.touchpad.naturalScrolling = true;
   };
 
-  # Configure keymap in X11
-  services.xserver.layout = "us,ar";
-  # See Full Keyboard Layout Keybinds "grep "grp:.*toggle" /usr/share/X11/xkb/rules/base.lst"
-  services.xserver.xkbOptions = "grp:alt_shift_toggle";
-
   # Enable sound.
-  sound.enable = true;
-  hardware.pulseaudio.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    wireplumber.enable = true;
+    jack.enable = true;
+  };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  services.xserver.libinput.enable = true;
-  services.xserver.libinput.touchpad.naturalScrolling = true;
-  services.xserver.dpi = 140;
-
-  
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.cargo = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "networkmanager" "audio" "video" "render" "bluetooth" ];
   };
 
   # Disable sudo
@@ -95,30 +106,6 @@
     git
   ];
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  # Copy the NixOS configuration file and link it from the resulting system
-  # (/run/current-system/configuration.nix). This is useful in case you
-  # accidentally delete configuration.nix.
-  # system.copySystemConfiguration = true;
-
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
@@ -127,17 +114,8 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "22.11"; # Did you read the comment?
   
-  # Storage Optimization
-  nix.settings.auto-optimise-store = true;
-  nix.gc = {
-    automatic = true;
-    dates = "daily";
-    options = "--delete-older-than 10d";
-  };
-  
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   fonts.fontDir.enable = true;
-
   services.xserver.displayManager.lightdm.background = /home/cargo/.local/share/wallhaven/wallhaven-m9wp81.jpg;
 
 }
