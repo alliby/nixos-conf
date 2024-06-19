@@ -1,10 +1,9 @@
 {
-  config,
   pkgs,
   ...
 }: {
   fonts = {
-    fonts = with pkgs; [
+    packages = with pkgs; [
       material-icons
       material-design-icons
       roboto
@@ -23,10 +22,11 @@
       noto-fonts-cjk
       noto-fonts-emoji
       jetbrains-mono
-      (nerdfonts.override {fonts = ["Iosevka" "JetBrainsMono"];})
+      amiri
+      font-awesome
     ];
 
-    enableDefaultFonts = false;
+    enableDefaultPackages = false;
 
     # this fixes emoji stuff
     fontconfig = {
@@ -44,4 +44,3 @@
     };
   };
 }
-
