@@ -2,7 +2,7 @@
   description = "My NIXOS Configuration";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-23.11";
+    nixpkgs.url = "nixpkgs/nixos-24.11";
     unstable.url = "nixpkgs/nixos-unstable";
   };
 

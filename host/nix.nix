@@ -7,7 +7,7 @@
   environment = {
     # set channels (backwards compatibility)
     etc = {
-      "nix/flake-channels/nixpkgs".source = inputs.unstable;
+      "nix/flake-channels/nixpkgs".source = inputs.nixpkgs;
     };
     defaultPackages = [];
   };
@@ -25,14 +25,13 @@
       allowUnfree = false;
       allowUnfreePredicate = pkg:
         builtins.elem (lib.getName pkg) [
-          "nvidia-x11"
-          "nvidia-settings"
+	        "canon-cups-ufr2"
         ];
     };
   };
 
   nix = {
-    package = pkgs.nixUnstable;
+    package = pkgs.nixVersions.latest;
 
     # Make builds run with low priority so my system stays responsive
     daemonCPUSchedPolicy = "idle";
@@ -43,7 +42,7 @@
 
     # This will additionally add your inputs to the system's legacy channels
     # Making legacy nix commands consistent as well, awesome!
-    nixPath = [ "nixpkgs=${inputs.unstable}" ];
+    nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
     settings = {
       # allow sudo users to mark the following values as trusted
@@ -55,15 +54,14 @@
       log-lines = 20;
       extra-experimental-features = ["flakes" "nix-command" "recursive-nix" "ca-derivations"];
       substituters = [ "https://cache.nixos.org/" ];
-      trusted-public-keys = [ "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" ];
     };
   };
-  system.autoUpgrade.enable = false;
+  system.autoUpgrade.enable = true;
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "22.11"; # Did you read the comment?
+  system.stateVersion = "24.11"; # Did you read the comment?
 }

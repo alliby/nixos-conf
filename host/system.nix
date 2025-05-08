@@ -1,5 +1,6 @@
 {
   pkgs,
+  inputs,
   ...
 }: {
   boot.loader.systemd-boot.enable = true;
@@ -18,14 +19,14 @@
   # Bluetooth
   hardware.bluetooth = {
     enable = true;
-    package = pkgs.bluez.override { withExperimental = true; };
+    package = pkgs.bluez;
+    powerOnBoot = false;
     settings = {
       General = {
         Experimental = true;
       };
     };
-  };
-  
+  };  
 
   # Set your time zone.
   time.timeZone = "Africa/Algiers";
@@ -37,37 +38,37 @@
     useXkbConfig = true; # use xkbOptions in tty.
   };
 
-  # Enable the X11 windowing system.
+  # X11 windowing system.
   services.xserver = {
-    enable = true;
+    enable = false;
     excludePackages = [ pkgs.xterm ];
-
-    # # Tiling Windows Manager
-    windowManager.bspwm.enable = true;
-    windowManager.i3.enable = true;
-
-    # # Configure keymap in X11
-    # # See Full Keyboard Layout Keybinds "grep "grp:.*toggle" /usr/share/X11/xkb/rules/base.lst"
+    displayManager.lightdm.enable = false;
     xkb = {
-      layout = "us,ara";
-      options = "grp:alt_shift_toggle";
+      layout = "gb,ara";
+      options = "grp:win_space_toggle";
     };
-
-    # # Enable touchpad support (enabled default in most desktopManager).
-    libinput.enable = true;
-    libinput.touchpad.naturalScrolling = true;
   };
 
-  # Enable sound.
-  sound.enable = true;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-  };
+  # Sound
+  services.pipewire.enable = false;
+  hardware.pulseaudio.enable = true;
 
+  # Autologin
+  services.greetd.enable = true;
+  services.greetd.settings.default_session.command = "${pkgs.greetd.greetd}/bin/agreety --cmd ${pkgs.bashInteractive}/bin/bash";	
+  services.greetd.settings.initial_session.user = "cargo";
+  services.greetd.settings.initial_session.command = "sway > ~/.sway.log 2>&1";
+
+  # Printing
+  services.printing.enable = false;
+
+  # Enable touchpad support (enabled default in most desktopManager).
+  services.libinput.enable = true;
+  services.libinput.touchpad.naturalScrolling = true;
+
+  # Dbus
+  services.dbus.enable = true;
+  
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.cargo = {
     isNormalUser = true;
@@ -84,13 +85,8 @@
       persist = true;
     }
   ];
-
-  services.xserver.displayManager = {
-    defaultSession = "none+i3";
-    autoLogin = {
-      enable = true;
-      user = "cargo";
-    };
-  };
   programs.dconf.enable = true;
+
+  # Auto mount USBs
+  # services.udisks2.enable = true;
 }

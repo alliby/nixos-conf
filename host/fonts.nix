@@ -4,41 +4,29 @@
 }: {
   fonts = {
     packages = with pkgs; [
-      material-icons
-      material-design-icons
-      roboto
-      work-sans
-      comic-neue
-      source-sans
-      twemoji-color-font
-      comfortaa
-      inter
-      lato
-      lexend
-      jost
-      dejavu_fonts
       iosevka-bin
       noto-fonts
-      noto-fonts-cjk
+      noto-fonts-cjk-sans
       noto-fonts-emoji
       jetbrains-mono
-      amiri
-      font-awesome
+      fira-code
     ];
 
     enableDefaultPackages = false;
-
     # this fixes emoji stuff
     fontconfig = {
+      enable = true;
+      includeUserConf = true;
       defaultFonts = {
-        monospace = [
-          "Iosevka Term"
-          "Iosevka Term Nerd Font Complete Mono"
-          "Iosevka Nerd Font"
-          "Noto Color Emoji"
+        sansSerif = [
+          "Noto Sans"
+          "Noto Naskh Arabic UI"
         ];
-        sansSerif = ["Lexend" "Noto Color Emoji"];
-        serif = ["Noto Serif" "Noto Color Emoji"];
+        serif = [
+          "Noto Serif"
+          "Noto Naskh Arabic UI"
+        ];
+        monospace = ["Iosevka" ];
         emoji = ["Noto Color Emoji"];
       };
     };

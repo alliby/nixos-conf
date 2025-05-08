@@ -1,8 +1,6 @@
 { ... }: {
   environment.variables = {
-    # Set Helix as Default Editor
-    EDITOR = "hx"; 
-    TERMINAL = "alacritty";
+    GDK_SCALE = "1.5";
     _JAVA_AWT_WM_NONREPARENTING = "1";
   };
 }
